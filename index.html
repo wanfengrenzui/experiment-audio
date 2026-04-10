@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实验刺激生成器</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">实验刺激控制台</p>
+          <h1>头前倾实验音效生成页</h1>
+          <p class="lead">
+            选择频率、振幅、音色和时长后即可生成对应刺激。页面内的 dB 为实验标记值，真实声压仍需耳机校准。
+          </p>
+        </div>
+        <div class="hero-card">
+          <span class="hero-card-label">当前组合</span>
+          <strong id="summaryLabel">S1 · 300 Hz · 60 dB · 纯音 · 1.2 s</strong>
+          <span id="summaryHint">低频柔和提示</span>
+        </div>
+      </section>
+
+      <section class="panel grid-layout">
+        <div class="controls">
+          <div class="control-group">
+            <div class="group-header">
+              <h2>频率 / Pitch</h2>
+              <span>2 选 1</span>
+            </div>
+            <div class="segmented" role="radiogroup" aria-label="频率选择">
+              <label><input type="radio" name="pitch" value="300" checked />300 Hz</label>
+              <label><input type="radio" name="pitch" value="1000" />1000 Hz</label>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="group-header">
+              <h2>振幅 / Amplitude</h2>
+              <span>dB 标记</span>
+            </div>
+            <div class="segmented" role="radiogroup" aria-label="振幅选择">
+              <label><input type="radio" name="amplitude" value="60" checked />60 dB</label>
+              <label><input type="radio" name="amplitude" value="75" />75 dB</label>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="group-header">
+              <h2>音色 / Timbre</h2>
+              <span>2 选 1</span>
+            </div>
+            <div class="segmented" role="radiogroup" aria-label="音色选择">
+              <label><input type="radio" name="timbre" value="pure" checked />纯音</label>
+              <label><input type="radio" name="timbre" value="natural" />自然音</label>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="group-header">
+              <h2>时长 / Duration</h2>
+              <span>秒</span>
+            </div>
+            <div class="segmented duration-options" role="radiogroup" aria-label="时长选择">
+              <label><input type="radio" name="duration" value="0.8" />0.8 s</label>
+              <label><input type="radio" name="duration" value="1.2" checked />1.2 s</label>
+              <label><input type="radio" name="duration" value="1.6" />1.6 s</label>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="playButton" class="primary">生成并播放</button>
+            <button id="downloadButton" class="secondary">下载 WAV</button>
+            <button id="stopButton" class="ghost">停止</button>
+          </div>
+
+          <p class="status" id="statusText">准备就绪，选择参数后点击生成。</p>
+        </div>
+
+        <div class="preview">
+          <div class="group-header">
+            <h2>八种实验组合</h2>
+            <span>点击即可直接套用</span>
+          </div>
+          <div id="presetGrid" class="preset-grid" aria-label="八种组合预设"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
