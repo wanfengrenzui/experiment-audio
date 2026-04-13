@@ -16,42 +16,42 @@ const presets = [
   {
     id: "S3",
     pitch: 300,
-    amplitude: 75,
+    amplitude: 80,
     timbre: "pure",
     description: "低频增强提示",
   },
   {
     id: "S4",
     pitch: 300,
-    amplitude: 75,
+    amplitude: 80,
     timbre: "natural",
     description: "低频增强自然",
   },
   {
     id: "S5",
-    pitch: 1000,
+    pitch: 1200,
     amplitude: 60,
     timbre: "pure",
     description: "高频提示音",
   },
   {
     id: "S6",
-    pitch: 1000,
+    pitch: 1200,
     amplitude: 60,
     timbre: "natural",
     description: "高频自然音",
   },
   {
     id: "S7",
-    pitch: 1000,
-    amplitude: 75,
+    pitch: 1200,
+    amplitude: 80,
     timbre: "pure",
     description: "高频警示音",
   },
   {
     id: "S8",
-    pitch: 1000,
-    amplitude: 75,
+    pitch: 1200,
+    amplitude: 80,
     timbre: "natural",
     description: "高频增强自然",
   },
@@ -181,7 +181,7 @@ function createBuffer({ pitch, amplitude, timbre }) {
   const buffer = context.createBuffer(1, frameCount, sampleRate);
   const channel = buffer.getChannelData(0);
 
-  const level = Math.pow(10, (amplitude - 75) / 20) * 0.48;
+  const level = Math.pow(10, (amplitude - 80) / 20) * 0.48;
   let filteredNoise = 0;
 
   for (let index = 0; index < frameCount; index += 1) {
