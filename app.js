@@ -61,7 +61,7 @@ const state = {
   pitch: 300,
   amplitude: 60,
   timbre: "pure",
-  duration: 1.2,
+  duration: 0.2,
   currentSource: null,
   audioContext: null,
 };
@@ -86,16 +86,14 @@ function getSelection() {
   const pitch = Number(document.querySelector('input[name="pitch"]:checked').value);
   const amplitude = Number(document.querySelector('input[name="amplitude"]:checked').value);
   const timbre = document.querySelector('input[name="timbre"]:checked').value;
-  const duration = Number(document.querySelector('input[name="duration"]:checked').value);
 
-  return { pitch, amplitude, timbre, duration };
+  return { pitch, amplitude, timbre, duration: state.duration };
 }
 
 function setSelection(nextSelection) {
   state.pitch = nextSelection.pitch;
   state.amplitude = nextSelection.amplitude;
   state.timbre = nextSelection.timbre;
-  state.duration = nextSelection.duration;
 
   document.querySelectorAll('input[name="pitch"]').forEach((input) => {
     input.checked = Number(input.value) === state.pitch;
@@ -107,10 +105,6 @@ function setSelection(nextSelection) {
 
   document.querySelectorAll('input[name="timbre"]').forEach((input) => {
     input.checked = input.value === state.timbre;
-  });
-
-  document.querySelectorAll('input[name="duration"]').forEach((input) => {
-    input.checked = Number(input.value) === state.duration;
   });
 
   updateSummary();
@@ -132,8 +126,8 @@ function getTimbreLabel(timbre) {
 
 function updateSummary() {
   const preset = findPreset(state);
-  summaryLabel.textContent = `${preset.id} · ${state.pitch} Hz · ${state.amplitude} dB · ${getTimbreLabel(state.timbre)} · ${state.duration.toFixed(1)} s`;
-  summaryHint.textContent = `${preset.description} · 时长 ${state.duration.toFixed(1)} s`;
+  summaryLabel.textContent = `${preset.id} · ${state.pitch} Hz · ${state.amplitude} dB · ${getTimbreLabel(state.timbre)} · 200 ms`;
+  summaryHint.textContent = `${preset.description} · 时长 200 ms`;
 }
 
 function updatePresetState() {
@@ -294,11 +288,11 @@ function downloadCurrentStimulus() {
   const anchor = document.createElement("a");
 
   anchor.href = url;
-  anchor.download = `${preset.id}_${selection.pitch}Hz_${selection.amplitude}dB_${selection.timbre}_${selection.duration.toFixed(1)}s.wav`;
+  anchor.download = `${preset.id}_${selection.pitch}Hz_${selection.amplitude}dB_${selection.timbre}_200ms.wav`;
   anchor.click();
   URL.revokeObjectURL(url);
 
-  statusText.textContent = `已导出 ${preset.id} 的 WAV 文件，时长 ${selection.duration.toFixed(1)} s。`;
+  statusText.textContent = `已导出 ${preset.id} 的 WAV 文件，时长 200 ms。`;
 }
 
 function bindControls() {
@@ -326,14 +320,6 @@ function bindControls() {
     });
   });
 
-  document.querySelectorAll('input[name="duration"]').forEach((input) => {
-    input.addEventListener("change", () => {
-      state.duration = Number(input.value);
-      updateSummary();
-      updatePresetState();
-    });
-  });
-
   playButton.addEventListener("click", playStimulus);
   downloadButton.addEventListener("click", downloadCurrentStimulus);
   stopButton.addEventListener("click", () => {
@@ -344,6 +330,6 @@ function bindControls() {
 
 renderPresets();
 bindControls();
-setSelection({ pitch: 300, amplitude: 60, timbre: "pure", duration: 1.2 });
+setSelection({ pitch: 300, amplitude: 60, timbre: "pure" });
 updateSummary();
 updatePresetState();

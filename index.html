@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>实验刺激生成器</title>
-    <link rel="stylesheet" href="styles.css?v=20260413c" />
+    <link rel="stylesheet" href="styles.css?v=20260414a" />
   </head>
   <body>
     <main class="app-shell">
@@ -13,12 +13,12 @@
           <p class="eyebrow">实验刺激控制台</p>
           <h1>头前倾实验音效生成页</h1>
           <p class="lead">
-            选择频率、振幅、音色和时长后即可生成对应刺激。页面内的 dB 为实验标记值，真实声压仍需耳机校准。
+            选择频率、振幅和音色后即可生成对应刺激。当前刺激时长固定为 200ms。页面内的 dB 为实验标记值，真实声压仍需耳机校准。
           </p>
         </div>
         <div class="hero-card">
           <span class="hero-card-label">当前组合</span>
-          <strong id="summaryLabel">S1 · 300 Hz · 60 dB · 纯音 · 1.2 s</strong>
+          <strong id="summaryLabel">S1 · 300 Hz · 60 dB · 纯音 · 200 ms</strong>
           <span id="summaryHint">低频柔和提示</span>
         </div>
       </section>
@@ -58,18 +58,6 @@
             </div>
           </div>
 
-          <div class="control-group">
-            <div class="group-header">
-              <h2>时长 / Duration</h2>
-              <span>秒</span>
-            </div>
-            <div class="segmented duration-options" role="radiogroup" aria-label="时长选择">
-              <label><input type="radio" name="duration" value="0.8" />0.8 s</label>
-              <label><input type="radio" name="duration" value="1.2" checked />1.2 s</label>
-              <label><input type="radio" name="duration" value="1.6" />1.6 s</label>
-            </div>
-          </div>
-
           <div class="actions">
             <button id="playButton" class="primary">生成并播放</button>
             <button id="downloadButton" class="secondary">下载 WAV</button>
@@ -89,6 +77,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260413c"></script>
+    <script src="app.js?v=20260414a"></script>
   </body>
 </html>

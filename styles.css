@@ -160,10 +160,6 @@ h1 {
   gap: 10px;
 }
 
-.duration-options {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .segmented label,
 .preset {
   position: relative;
@@ -289,7 +285,4 @@ button:active {
     grid-template-columns: 1fr;
   }
 
-  .duration-options {
-    grid-template-columns: 1fr;
-  }
 }
