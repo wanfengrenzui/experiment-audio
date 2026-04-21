@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实验序列生成器</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f1ea;
+        --bg-accent: #e9f0f4;
+        --panel: rgba(255, 255, 255, 0.82);
+        --panel-border: rgba(18, 24, 38, 0.1);
+        --text: #16202a;
+        --muted: #607080;
+        --accent: #0f7c75;
+        --accent-strong: #0a5f5a;
+        --accent-soft: rgba(15, 124, 117, 0.12);
+        --shadow: 0 24px 70px rgba(16, 24, 40, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(15, 124, 117, 0.12), transparent 34%),
+          radial-gradient(circle at top right, rgba(244, 180, 0, 0.14), transparent 28%),
+          linear-gradient(180deg, var(--bg) 0%, var(--bg-accent) 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.18;
+        background-image: linear-gradient(rgba(15, 24, 40, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(15, 24, 40, 0.04) 1px, transparent 1px);
+        background-size: 48px 48px;
+      }
+
+      .app-shell {
+        position: relative;
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 40px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.8fr) minmax(280px, 0.9fr);
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 20px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 12px;
+        color: var(--accent-strong);
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 5vw, 56px);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+
+      .lead {
+        max-width: 64ch;
+        margin: 14px 0 0;
+        font-size: 15px;
+        line-height: 1.8;
+        color: var(--muted);
+      }
+
+      .hero-card,
+      .panel {
+        border: 1px solid var(--panel-border);
+        background: var(--panel);
+        backdrop-filter: blur(16px);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-card {
+        border-radius: 24px;
+        padding: 22px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .hero-card-label {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .hero-card strong {
+        font-size: 18px;
+        line-height: 1.4;
+      }
+
+      .hero-card span:last-child {
+        color: var(--muted);
+      }
+
+      .panel {
+        border-radius: 28px;
+        padding: 32px;
+      }
+
+      .container {
+        display: grid;
+        gap: 24px;
+      }
+
+      .number-display {
+        text-align: center;
+        padding: 48px 32px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(18, 24, 38, 0.08);
+      }
+
+      .number-display .label {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      .number-display .big-number {
+        font-size: 96px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--accent);
+        margin: 0;
+      }
+
+      .number-display .progress {
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 16px;
+      }
+
+      .status-box {
+        padding: 24px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(18, 24, 38, 0.08);
+        text-align: center;
+        display: none;
+      }
+
+      .status-box.show {
+        display: block;
+      }
+
+      .status-box.completed {
+        background: rgba(15, 124, 117, 0.1);
+        border-color: var(--accent);
+      }
+
+      .status-box h3 {
+        margin: 0 0 8px;
+        color: var(--accent-strong);
+        font-size: 18px;
+      }
+
+      .status-box p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: white;
+      }
+
+      .primary:hover {
+        background: var(--accent-strong);
+        box-shadow: 0 8px 24px rgba(15, 124, 117, 0.2);
+      }
+
+      .primary:active {
+        transform: scale(0.98);
+      }
+
+      .secondary {
+        background: rgba(15, 124, 117, 0.1);
+        color: var(--accent);
+        border: 1px solid var(--accent-soft);
+      }
+
+      .secondary:hover {
+        background: var(--accent-soft);
+      }
+
+      .ghost {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid rgba(18, 24, 38, 0.1);
+      }
+
+      .ghost:hover {
+        background: rgba(18, 24, 38, 0.04);
+      }
+
+      .used-numbers {
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(18, 24, 38, 0.08);
+      }
+
+      .used-numbers h3 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .number-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .tag.empty {
+        color: var(--muted);
+        background: rgba(18, 24, 38, 0.05);
+      }
+
+      @media (max-width: 640px) {
+        .app-shell {
+          width: min(100% - 18px, 100%);
+          padding: 18px 0 28px;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .panel {
+          padding: 18px;
+        }
+
+        .number-display {
+          padding: 32px 18px;
+        }
+
+        .number-display .big-number {
+          font-size: 72px;
+        }
+
+        .actions {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">实验序列控制</p>
+          <h1>随机刺激序列生成器</h1>
+          <p class="lead">自动生成 1-12 的随机序列，已使用过的序列号不会重复出现。完整使用一轮后可重置进行下一次实验。</p>
+        </div>
+        <div class="hero-card">
+          <span class="hero-card-label">剩余数量</span>
+          <strong id="remainingCount">12</strong>
+          <span id="progressHint">可继续生成</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="container">
+          <div class="number-display">
+            <div class="label">下一个刺激序列号</div>
+            <p class="big-number" id="randomNumber">-</p>
+            <div class="progress" id="progressText">已完成 0 / 12</div>
+          </div>
+
+          <div class="status-box" id="statusBox">
+            <h3 id="statusTitle">🎉 本轮实验完成！</h3>
+            <p id="statusMsg">所有 12 个序列号已全部使用，请进行下一轮实验。</p>
+          </div>
+
+          <div class="used-numbers">
+            <h3>已使用的序列号</h3>
+            <div class="number-tags" id="usedTags"></div>
+          </div>
+
+          <div class="actions">
+            <button id="generateBtn" class="primary">生成下一个</button>
+            <button id="resetBtn" class="secondary">重置（下一轮实验）</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const state = {
+        availableNumbers: Array.from({ length: 12 }, (_, i) => i + 1),
+        usedNumbers: [],
+        currentNumber: null,
+      };
+
+      const elements = {
+        randomNumber: document.getElementById("randomNumber"),
+        progressText: document.getElementById("progressText"),
+        remainingCount: document.getElementById("remainingCount"),
+        progressHint: document.getElementById("progressHint"),
+        statusBox: document.getElementById("statusBox"),
+        statusTitle: document.getElementById("statusTitle"),
+        statusMsg: document.getElementById("statusMsg"),
+        usedTags: document.getElementById("usedTags"),
+        generateBtn: document.getElementById("generateBtn"),
+        resetBtn: document.getElementById("resetBtn"),
+      };
+
+      function getRandomIndex(arr) {
+        return Math.floor(Math.random() * arr.length);
+      }
+
+      function generateNumber() {
+        if (state.availableNumbers.length === 0) {
+          // 已完全用完
+          elements.statusBox.classList.add("show", "completed");
+          elements.generateBtn.disabled = true;
+          return;
+        }
+
+        const index = getRandomIndex(state.availableNumbers);
+        const number = state.availableNumbers[index];
+
+        // 从可用列表中删除
+        state.availableNumbers.splice(index, 1);
+        // 添加到已使用列表
+        state.usedNumbers.push(number);
+        state.currentNumber = number;
+
+        updateUI();
+
+        // 检查是否已全部使用
+        if (state.availableNumbers.length === 0) {
+          setTimeout(() => {
+            elements.statusBox.classList.add("show", "completed");
+            elements.generateBtn.disabled = true;
+          }, 300);
+        }
+      }
+
+      function updateUI() {
+        // 更新主显示数字
+        elements.randomNumber.textContent = state.currentNumber;
+
+        // 更新进度
+        const completed = state.usedNumbers.length;
+        const total = 12;
+        elements.progressText.textContent = `已完成 ${completed} / ${total}`;
+
+        // 更新剩余数量
+        const remaining = state.availableNumbers.length;
+        elements.remainingCount.textContent = remaining;
+        elements.progressHint.textContent = remaining > 0 ? "可继续生成" : "已全部用完";
+
+        // 更新已使用的标签
+        renderUsedTags();
+      }
+
+      function renderUsedTags() {
+        const sorted = [...state.usedNumbers].sort((a, b) => a - b);
+        if (sorted.length === 0) {
+          elements.usedTags.innerHTML = '<span class="tag empty">暂无已使用序列号</span>';
+        } else {
+          elements.usedTags.innerHTML = sorted
+            .map((num) => `<span class="tag">${num}</span>`)
+            .join("");
+        }
+      }
+
+      function reset() {
+        state.availableNumbers = Array.from({ length: 12 }, (_, i) => i + 1);
+        state.usedNumbers = [];
+        state.currentNumber = null;
+        elements.randomNumber.textContent = "-";
+        elements.statusBox.classList.remove("show", "completed");
+        elements.generateBtn.disabled = false;
+        updateUI();
+      }
+
+      elements.generateBtn.addEventListener("click", generateNumber);
+      elements.resetBtn.addEventListener("click", reset);
+
+      // 初始化UI
+      updateUI();
+    </script>
+  </body>
+</html>
