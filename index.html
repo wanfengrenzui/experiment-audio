@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>实验刺激生成器</title>
+    <title>Experimental Stimulus Generator</title>
     <link rel="stylesheet" href="styles.css?v=20260414a" />
   </head>
   <body>
     <main class="app-shell">
       <section class="hero">
         <div>
-          <p class="eyebrow">实验刺激控制台</p>
-          <h1>头前倾实验音效生成页</h1>
+          <p class="eyebrow">Stimulus Control Console</p>
+          <h1>Head-Forwarding Experiment Audio Generator</h1>
           <p class="lead">
-            选择频率、振幅和音色后即可生成对应刺激。当前刺激时长固定为 200ms。页面内的 dB 为实验标记值，真实声压仍需耳机校准。
+            Select pitch, amplitude, and timbre to generate a matching stimulus. The stimulus duration is fixed at 200 ms. The dB values on this page are experimental markers and still require headphone calibration for actual sound pressure.
           </p>
         </div>
         <div class="hero-card">
-          <span class="hero-card-label">当前组合</span>
-          <strong id="summaryLabel">S1 · 300 Hz · 60 dB · 纯音 · 200 ms</strong>
-          <span id="summaryHint">低频柔和提示（共 12 种）</span>
+          <span class="hero-card-label">Current Combination</span>
+          <strong id="summaryLabel">S1 · 300 Hz · 60 dB · Pure Tone · 200 ms</strong>
+          <span id="summaryHint">Low-frequency soft cue (12 total)</span>
         </div>
       </section>
 
@@ -27,10 +27,10 @@
         <div class="controls">
           <div class="control-group">
             <div class="group-header">
-              <h2>频率 / Pitch</h2>
-              <span>3 选 1</span>
+              <h2>Pitch</h2>
+              <span>Choose 1 of 3</span>
             </div>
-            <div class="segmented" role="radiogroup" aria-label="频率选择">
+            <div class="segmented" role="radiogroup" aria-label="Pitch selection">
               <label><input type="radio" name="pitch" value="300" checked />300 Hz</label>
               <label><input type="radio" name="pitch" value="750" />750 Hz</label>
               <label><input type="radio" name="pitch" value="1200" />1200 Hz</label>
@@ -39,10 +39,10 @@
 
           <div class="control-group">
             <div class="group-header">
-              <h2>振幅 / Amplitude</h2>
-              <span>dB 标记</span>
+              <h2>Amplitude</h2>
+              <span>dB marker</span>
             </div>
-            <div class="segmented" role="radiogroup" aria-label="振幅选择">
+            <div class="segmented" role="radiogroup" aria-label="Amplitude selection">
               <label><input type="radio" name="amplitude" value="60" checked />60 dB</label>
               <label><input type="radio" name="amplitude" value="80" />80 dB</label>
             </div>
@@ -50,30 +50,28 @@
 
           <div class="control-group">
             <div class="group-header">
-              <h2>音色 / Timbre</h2>
-              <span>2 选 1</span>
+              <h2>Timbre</h2>
+              <span>Choose 1 of 2</span>
             </div>
-            <div class="segmented" role="radiogroup" aria-label="音色选择">
-              <label><input type="radio" name="timbre" value="pure" checked />纯音</label>
-              <label><input type="radio" name="timbre" value="natural" />自然音</label>
+            <div class="segmented" role="radiogroup" aria-label="Timbre selection">
+              <label><input type="radio" name="timbre" value="pure" checked />Pure Tone</label>
+              <label><input type="radio" name="timbre" value="natural" />Natural Tone</label>
             </div>
           </div>
 
           <div class="actions">
-            <button id="playButton" class="primary">生成并播放</button>
-            <button id="downloadButton" class="secondary">下载 WAV</button>
-            <button id="stopButton" class="ghost">停止</button>
+            <button id="playButton" class="primary">Generate and Play</button>
+            <button id="stopButton" class="ghost">Stop</button>
           </div>
 
-          <p class="status" id="statusText">准备就绪，选择参数后点击生成。</p>
+          <p class="status" id="statusText">Ready. Select parameters and click Generate.</p>
         </div>
 
         <div class="preview">
           <div class="group-header">
-            <h2>十二种实验组合</h2>
-            <span>点击即可直接套用</span>
+            <h2>12 Experimental Combinations</h2>
           </div>
-          <div id="presetGrid" class="preset-grid" aria-label="十二种组合预设"></div>
+          <div id="presetGrid" class="preset-grid" aria-label="Twelve combination presets"></div>
         </div>
       </section>
     </main>

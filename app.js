@@ -4,84 +4,84 @@ const presets = [
     pitch: 300,
     amplitude: 60,
     timbre: "pure",
-    description: "低频柔和提示",
+    description: "Low-frequency soft cue",
   },
   {
     id: "S2",
     pitch: 300,
     amplitude: 60,
     timbre: "natural",
-    description: "低频自然反馈",
+    description: "Low-frequency natural feedback",
   },
   {
     id: "S3",
     pitch: 300,
     amplitude: 80,
     timbre: "pure",
-    description: "低频增强提示",
+    description: "Low-frequency enhanced cue",
   },
   {
     id: "S4",
     pitch: 300,
     amplitude: 80,
     timbre: "natural",
-    description: "低频增强自然",
+    description: "Low-frequency enhanced natural tone",
   },
   {
     id: "S5",
     pitch: 750,
     amplitude: 60,
     timbre: "pure",
-    description: "中频柔和提示",
+    description: "Mid-frequency soft cue",
   },
   {
     id: "S6",
     pitch: 750,
     amplitude: 60,
     timbre: "natural",
-    description: "中频自然反馈",
+    description: "Mid-frequency natural feedback",
   },
   {
     id: "S7",
     pitch: 750,
     amplitude: 80,
     timbre: "pure",
-    description: "中频增强提示",
+    description: "Mid-frequency enhanced cue",
   },
   {
     id: "S8",
     pitch: 750,
     amplitude: 80,
     timbre: "natural",
-    description: "中频增强自然",
+    description: "Mid-frequency enhanced natural tone",
   },
   {
     id: "S9",
     pitch: 1200,
     amplitude: 60,
     timbre: "pure",
-    description: "高频提示音",
+    description: "High-frequency cue",
   },
   {
     id: "S10",
     pitch: 1200,
     amplitude: 60,
     timbre: "natural",
-    description: "高频自然音",
+    description: "High-frequency natural tone",
   },
   {
     id: "S11",
     pitch: 1200,
     amplitude: 80,
     timbre: "pure",
-    description: "高频警示音",
+    description: "High-frequency alert tone",
   },
   {
     id: "S12",
     pitch: 1200,
     amplitude: 80,
     timbre: "natural",
-    description: "高频增强自然",
+    description: "High-frequency enhanced natural tone",
   },
 ];
 
@@ -99,7 +99,6 @@ const summaryHint = document.getElementById("summaryHint");
 const statusText = document.getElementById("statusText");
 const presetGrid = document.getElementById("presetGrid");
 const playButton = document.getElementById("playButton");
-const downloadButton = document.getElementById("downloadButton");
 const stopButton = document.getElementById("stopButton");
 
 function getAudioContext() {
@@ -149,13 +148,13 @@ function findPreset(selection) {
 }
 
 function getTimbreLabel(timbre) {
-  return timbre === "pure" ? "纯音" : "自然音";
+  return timbre === "pure" ? "Pure Tone" : "Natural Tone";
 }
 
 function updateSummary() {
   const preset = findPreset(state);
   summaryLabel.textContent = `${preset.id} · ${state.pitch} Hz · ${state.amplitude} dB · ${getTimbreLabel(state.timbre)} · 200 ms`;
-  summaryHint.textContent = `${preset.description} · 时长 200 ms`;
+  summaryHint.textContent = `${preset.description} · 200 ms duration`;
 }
 
 function updatePresetState() {
@@ -262,65 +261,7 @@ async function playStimulus() {
   state.currentSource = source;
 
   const preset = findPreset(selection);
-  statusText.textContent = `已播放 ${preset.id}，${selection.pitch} Hz / ${selection.amplitude} dB / ${getTimbreLabel(selection.timbre)}。`;
-}
-
-function encodeWav(buffer) {
-  const channelData = buffer.getChannelData(0);
-  const bytesPerSample = 2;
-  const blockAlign = bytesPerSample;
-  const wavBuffer = new ArrayBuffer(44 + channelData.length * bytesPerSample);
-  const view = new DataView(wavBuffer);
-
-  const writeString = (offset, value) => {
-    for (let index = 0; index < value.length; index += 1) {
-      view.setUint8(offset + index, value.charCodeAt(index));
-    }
-  };
-
-  const sampleRate = buffer.sampleRate;
-  const byteRate = sampleRate * blockAlign;
-  const dataSize = channelData.length * bytesPerSample;
-
-  writeString(0, "RIFF");
-  view.setUint32(4, 36 + dataSize, true);
-  writeString(8, "WAVE");
-  writeString(12, "fmt ");
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, byteRate, true);
-  view.setUint16(32, blockAlign, true);
-  view.setUint16(34, 16, true);
-  writeString(36, "data");
-  view.setUint32(40, dataSize, true);
-
-  let offset = 44;
-  for (let index = 0; index < channelData.length; index += 1) {
-    const clamped = Math.max(-1, Math.min(1, channelData[index]));
-    view.setInt16(offset, clamped < 0 ? clamped * 0x8000 : clamped * 0x7fff, true);
-    offset += bytesPerSample;
-  }
-
-  return wavBuffer;
-}
-
-function downloadCurrentStimulus() {
-  const selection = getSelection();
-  const buffer = createBuffer(selection);
-  const wavBuffer = encodeWav(buffer);
-  const blob = new Blob([wavBuffer], { type: "audio/wav" });
-  const url = URL.createObjectURL(blob);
-  const preset = findPreset(selection);
-  const anchor = document.createElement("a");
-
-  anchor.href = url;
-  anchor.download = `${preset.id}_${selection.pitch}Hz_${selection.amplitude}dB_${selection.timbre}_200ms.wav`;
-  anchor.click();
-  URL.revokeObjectURL(url);
-
-  statusText.textContent = `已导出 ${preset.id} 的 WAV 文件，时长 200 ms。`;
+  statusText.textContent = `Played ${preset.id}: ${selection.pitch} Hz / ${selection.amplitude} dB / ${getTimbreLabel(selection.timbre)}.`;
 }
 
 function bindControls() {
@@ -349,10 +290,9 @@ function bindControls() {
   });
 
   playButton.addEventListener("click", playStimulus);
-  downloadButton.addEventListener("click", downloadCurrentStimulus);
   stopButton.addEventListener("click", () => {
     stopPlayback();
-    statusText.textContent = "播放已停止。";
+    statusText.textContent = "Playback stopped.";
   });
 }
 
